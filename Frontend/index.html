@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Wrapper</title>
+</head>
+<body>
+    <h1>Ask Gemini!</h1>
+    <textarea id="promptInput" rows="5" cols="50" placeholder="Enter your prompt here..."></textarea><br>
+    <button id="generateBtn">Generate</button>
+    <div id="responseOutput"></div>
+
+    <script>
+        document.getElementById('generateBtn').addEventListener('click', async () => {
+            const prompt = document.getElementById('promptInput').value;
+            const responseOutput = document.getElementById('responseOutput');
+            responseOutput.textContent = 'Generating...';
+
+            try {
+                // Make a request to your backend server
+                const response = await fetch('http://localhost:4000/generate-content', { // Make sure this matches your backend URL
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    responseOutput.textContent = data.generatedText;
+                } else {
+                    responseOutput.textContent = `Error: ${data.error || 'Something went wrong.'}`;
+                }
+            } catch (error) {
+                console.error('Error fetching from backend:', error);
+                responseOutput.textContent = 'Failed to connect to the server.';
+            }
+        });
+    </script>
+</body>
+</html>
